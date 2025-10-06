@@ -1,0 +1,27 @@
+query Notification($orderId: ID!) {
+  order(id: $orderId) {
+    createdAt
+    customer {
+      firstName
+      defaultAddress {
+        city
+        country
+      }
+    }
+    lineItems(first: 1) {
+      edges {
+        node {
+          product {
+            id
+            title
+            images(first: 1) {
+              nodes {
+                url
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

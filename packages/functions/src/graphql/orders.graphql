@@ -1,0 +1,37 @@
+  query Orders($first: Int!){
+    shop {
+      myshopifyDomain
+    }
+    orders(first: $first) {
+      edges {
+        node {
+          createdAt
+          customer {
+            firstName
+            lastName
+            defaultAddress {
+              city
+              country
+            }
+          }
+        }
+        node {
+          lineItems(first: 1) {
+            edges {
+              node {
+                product {
+                  id
+                  title
+                  images(first: 1) {
+                    nodes {
+                      url
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
