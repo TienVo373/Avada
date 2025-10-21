@@ -55,9 +55,7 @@ export async function syncOrders(shopify, shop) {
     const notifications = edges.map(edge => prepareNotification(shop, edge.node));
 
     // Save notifications in Firestore
-     for (const notification of notifications) {
-      await notificationRepository.createOne(notification);
-    }
+     await Promise.all(notifications.map(notifications => notificationRepository.createOne(notifications)));
 
     console.info(
       `Successfully created ${notifications.length} notifications for shop ${shopify.options.shopName}`
@@ -95,5 +93,25 @@ export async function createWebhooks(shopify) {
       format: 'json'
     });
     console.info(`[createWebhooks] Registered orders/create webhook for ${shopify.options.shopName}`);
+  }
+}
+export async function registerScriptTag(shopDomain, shopify) {
+  try {
+    const scriptUrl = `https://${appConfig.baseUrl}/scripttag/avada-sale-pop.min.js`;
+    const existingTags = await shopify.scriptTag.list();
+    const alreadyExists = existingTags.some(tag => tag.src === scriptUrl);
+    if (alreadyExists) {
+      console.log(`[registerScriptTag] Script tag already exists for ${shopDomain}`);
+      return;
+    }
+    // Register the script tag
+    await shopify.scriptTag.create({
+      event: 'onload',
+      src: scriptUrl,
+      display_scope: 'online_store',
+    });
+    console.log(`[registerScriptTag] Successfully registered script tag for ${shopify.options.shopName}`);
+  } catch (err) {
+    console.error(`[registerScriptTag] Failed for ${shopDomain}`, err);
   }
 }

@@ -1,13 +1,13 @@
+import { Firestore } from '@google-cloud/firestore';
 
-import admin from 'firebase-admin';
-import { getFirestore } from 'firebase-admin/firestore';
-
-if (!admin.apps || admin.apps.length === 0) {
-  admin.initializeApp();
-}
-
-const db = getFirestore();
-const COLLECTION = 'settings';
+/**
+ * @documentation
+ *
+ * Only use one repository to connect to one collection
+ * do not connect more than one collection from one repository
+ */
+const firestore = new Firestore();
+export const collection = firestore.collection('settings');
 
 /**
  * @param {string} shopId4
@@ -15,7 +15,7 @@ const COLLECTION = 'settings';
  */
 
 export async function get(shopId) {
-  const docRef = db.collection(COLLECTION).doc(shopId);
+  const docRef = collection.doc(shopId);
   const doc = await docRef.get();
   return doc.exists ? doc.data() : null;
 }
@@ -24,28 +24,42 @@ export async function get(shopId) {
  * @param {object} data
  * @returns {Promise<void>}
  */
-export async function create(shopId,defaultSetting) {
-  const docRef = db.collection(COLLECTION).doc(shopId);
-  const doc = await docRef.get();
+export async function create({ shopId, defaultSetting, shopDomain }) {
+  const docRef = collection.doc(shopId);
+  const doc = await docRef.get(); ``
   if (!doc.exists) {
     await docRef.set({
       ...defaultSetting,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      shopDomain,
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
-    return defaultSetting;
+    return { ...defaultSetting, shopDomain };
   }
   return doc.data();
 }
 
 
-export async function save(shopId, data) {
-   const docRef = db.collection(COLLECTION).doc(shopId);
+export async function update(shopId, data) {
+  const docRef = collection.doc(shopId);
   await docRef.set(
     {
       ...data,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      updatedAt: new Date()
     },
     { merge: true }
   );
+}
+// export async function getByShopId(shopId) {
+//   const docRef = collection.doc(shopId);
+//   const doc = await docRef.get();
+//   return doc.exists ? { id: doc.id, ...doc.data() } : null;
+// }
+export async function getByShopDomain(shopDomain) {
+  const snapshot = await collection
+    .where('shopDomain', '==', shopDomain)
+    .get();
+  if (snapshot.empty) return null;
+  const doc = snapshot.docs[0];
+  return { ...doc.data() };
 }

@@ -1,7 +1,6 @@
 import * as notificationsRepository from '../repositories/notificationsRepository.js';
-import { getCurrentShop,getCurrentShopData } from '../helpers/auth.js';
-import { paginateQuery } from '../repositories/helper.js';
-import {collection} from '../repositories/notificationsRepository.js';
+import { getCurrentShop, getCurrentShopData } from '../helpers/auth.js';
+
 
 export async function createNotification(ctx) {
   try {
@@ -11,7 +10,6 @@ export async function createNotification(ctx) {
       ctx.body = { error: 'Unauthorized: no shop in context' };
       return;
     }
-
     const {
       firstName,
       city,
@@ -28,7 +26,7 @@ export async function createNotification(ctx) {
       return;
     }
 
-    const id = await notificationsRepository.createOne({
+    const data = await notificationsRepository.createOne({
       shopId,
       firstName,
       city,
@@ -40,7 +38,7 @@ export async function createNotification(ctx) {
     });
 
     ctx.status = 201;
-    ctx.body = { id };
+    ctx.body = { data };
   } catch (error) {
     console.error('Error creating notification:', error);
     ctx.status = 500;
@@ -48,42 +46,24 @@ export async function createNotification(ctx) {
   }
 }
 export async function getNotifications(ctx) {
-//   try {
-//     const shopData = getCurrentShopData(ctx);
-//     const { limit, after, before } = ctx.query;
-//     console.log('[getNotifications] shopData.id=', shopData.id);
-//     const notifications = await notificationsRepository.get({
-//       shopId: shopData.id,
-//       shopDomain: shopData.shopifyDomain,
-//       limit: limit ? parseInt(limit, 10) : 10,
-//       after: after || '',
-//       before: before || '',
-//     });
-//     ctx.status = 200;
-//     ctx.body = { data: notifications,
-//       pageInfo: notifications.pageInfo
-//      }
-//   } catch (error) {
-//     console.error('Error fetching notifications:', error);
-//     ctx.status = 500;
-//     ctx.body = { error: 'Failed to fetch notifications' };
-//   }
-// }
-try {
+  try {
     const shopData = getCurrentShopData(ctx);
-    const { limit, after } = ctx.query;
+    const { limit, after, sortOrder } = ctx.query;
 
     // Build Firestore query
-    const notifications  =  await notificationsRepository.get ({ 
+    const notifications = await notificationsRepository.get({
       shopId: shopData.id,
       limit: parseInt(limit, 10),
-      after: after || undefined});
+      after: after || undefined,
+      sortOrder: sortOrder
+    })
+
     console.log('notifications: ', notifications);
-     ctx.status = 200;
+    ctx.status = 200;
     ctx.body = {
       data: notifications,
       pageInfo: {
-        hasNext: notifications.length === parseInt(limit, 10), // simplistic next page check
+        hasNext: notifications.length === parseInt(limit, 10),
         hasPre: !!after
       }
     };
@@ -91,23 +71,5 @@ try {
     console.error('Error fetching notifications:', error);
     ctx.status = 500;
     ctx.body = { error: 'Failed to fetch notifications' };
-  }
-}
-export async function getAllByShop(ctx) {
-  try {
-    const shopData = getCurrentShopData(ctx);
-    if (!shopData?.shopId) {
-      ctx.body = { error: 'Unauthorized: no shop in context' };
-      return;
-    }
-
-    const notifications = await notificationsRepository.getByShopId(shopData.shopId);
-
-    ctx.status = 200;
-    ctx.body = { data: notifications }
-  } catch (error) {
-    console.error('Error fetching notifications by shopId:', error);
-    ctx.status = 500;
-    ctx.body = { error: 'Failed to fetch notifications by shopId' };
   }
 }

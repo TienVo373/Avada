@@ -17,6 +17,7 @@
     "@avada/utils": "^2.0.3",
     "@google-cloud/firestore": "^6.6.1",
     "@google-cloud/pubsub": "^3.7.1",
+    "@koa/cors": "^5.0.0",
     "axios": "^0.27.2",
     "firebase-admin": "11.10.0",
     "firebase-functions": "4.4.1",

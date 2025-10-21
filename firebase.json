@@ -62,12 +62,16 @@
         "function": "authSa"
       },
       {
-        "source": "/webhook/**",
-        "function": "webhook"
+        "source": "/clientApi/**",
+        "function": "clientApi"
       },
       {
         "source": "/embed/**",
         "destination": "/embed.html"
+      },
+      {
+        "source": "/scripttag/**",
+        "destination": "avada-sale-pop.min.html"
       },
       {
         "source": "**",

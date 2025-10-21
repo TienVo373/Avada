@@ -1,11 +1,13 @@
-import admin from 'firebase-admin';
+import { Firestore } from '@google-cloud/firestore';
 
-if (!admin.apps.length) {
-  admin.initializeApp();
-}
-
-const db = admin.firestore();
-export const collection = db.collection('notifications');
+/**
+ * @documentation
+ *
+ * Only use one repository to connect to one collection
+ * do not connect more than one collection from one repository
+ */
+const firestore = new Firestore();
+export const collection = firestore.collection('notifications');
 
 /**
  * @param {Object} data - Notification data
@@ -14,22 +16,25 @@ export const collection = db.collection('notifications');
 export async function createOne(data) {
   const notification = await collection.add({
     ...data,
-    timestamp: new Date(data.timestamp),
+    timestamp: data.timestamp,
+    createdAt: data.createdAt
   });
-  return notification.id;
+  return notification.id
+    ;
 }
 
 /**
  * @param {Object} params
  * @param {string} params.shopId
+ * @param {string} params.sortOrder
  * @param {number} [params.limit=10]
  * @param {string} [params.after]
  * @returns {Promise<Array<Object>>}
  */
-export async function get({ shopId, limit = 10, after }) {
+export async function get({ shopId, limit = 10, after, sortOrder = 'desc' }) {
   let queryRef = collection
     .where('shopId', '==', shopId)
-    .orderBy('timestamp', 'desc')
+    .orderBy('timestamp', sortOrder)
     .limit(limit);
 
   if (after) {
@@ -49,10 +54,9 @@ export async function get({ shopId, limit = 10, after }) {
  * @param {string} shopId
  * @returns {Promise<Array<Object>>}
  */
-export async function getByShopId(shopId) {
+export async function getByShopDomain(shopDomain) {
   const snapshot = await collection
-    .where('shopId', '==', shopId)
-    .orderBy('timestamp', 'desc')
+    .where('shopDomain', '==', shopDomain)
     .get();
 
   return snapshot.docs.map(doc => ({
@@ -60,3 +64,4 @@ export async function getByShopId(shopId) {
     ...doc.data(),
   }));
 }
+

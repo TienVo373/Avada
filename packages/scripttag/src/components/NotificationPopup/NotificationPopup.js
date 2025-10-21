@@ -10,13 +10,14 @@ const NotificationPopup = ({
   productName = 'Puffer Jacket With Hidden Hood',
   timestamp = `${new Date()}`,
   productImage = 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
-  settings = {hideTimeAgo: false, truncateProductName: false}
+  settings = {hideTimeAgo: false, truncateProductName: false, position: 'bottom-right'}
 }) => {
   const truncateString = (str, n) => {
     return str?.length > n ? str.substring(0, n - 1) + '...' : str;
   };
+  
   return (
-    <div className="Avava-SP__Wrapper fadeInUp animated">
+    <div className={`Avava-SP__Wrapper fadeInUp animated ${settings.position}`}> 
       <div className="Avava-SP__Inner">
         <div className="Avava-SP__Container">
           <a href="#" className={'Avava-SP__LinkWrapper'}>
@@ -31,8 +32,7 @@ const NotificationPopup = ({
                 {firstName} in {city}, {country}
               </div>
               <div className={'Avada-SP__Subtitle'}>
-                purchased{' '}
-                {settings.truncateProductName ? truncateString(productName, 16) : productName}
+                purchased {settings.truncateProductName ? truncateString(productName, 16) : productName}
               </div>
               <div className={'Avada-SP__Footer'}>
                 {!settings.hideTimeAgo && <>{moment(timestamp).fromNow()} </>}

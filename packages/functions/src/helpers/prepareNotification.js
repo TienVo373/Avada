@@ -1,4 +1,5 @@
 import admin from 'firebase-admin';
+import moment from 'moment';
 /**
  * Convert Shopify order into Notification object
  * @param {Object} shop - shop data from Firestore
@@ -9,7 +10,9 @@ export default function prepareNotification(shop, order) {
   const customer = order?.customer || {};
   const lineItem = order?.lineItems?.edges?.[0]?.node || {};
   const product = lineItem?.product || {};
-const productImage = product.images?.nodes?.[0]?.url || '';
+  const productImage = product.images?.nodes?.[0]?.url || '';
+  const createdAt = new Date(order.createdAt);
+  const timestamp = new Date(order.createdAt);
   return {
     shopId: shop.id,
     shopDomain: shop.shopifyDomain || '',
@@ -20,6 +23,7 @@ const productImage = product.images?.nodes?.[0]?.url || '';
     productName: product.title || '',
     productId: product.id || '',
     productImage: productImage,
-    createdAt: order?.createdAt || 'unknown'
+    createdAt: createdAt,
+    timestamp: timestamp
   };
 }

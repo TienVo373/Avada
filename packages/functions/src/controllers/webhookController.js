@@ -19,8 +19,8 @@ export async function listenNewOrder(ctx) {
     console.log(order.admin_graphql_api_id);
 
     const notification = prepareNotification(shop, orderData);
-    const returnNoti = await notificationRepository.createOne(notification);
-    console.log('New order processed and notification created:', returnNoti);
+    const newOrder = await notificationRepository.createOne(notification);
+    console.log('New order processed and notification created:', newOrder);
     ctx.status = 200;
     ctx.body = { data: notification, success: true };
   } catch (e) {

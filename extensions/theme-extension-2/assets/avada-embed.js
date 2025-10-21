@@ -1,5 +1,5 @@
 (function() {
-  const BASE_URL = 'https://wrote-union-helena-sisters.trycloudflare.com/scripttag';
+  const BASE_URL = 'https://localhost:3001/scripttag';
 
   const scriptElement = document.createElement('script');
   scriptElement.type = 'text/javascript';
