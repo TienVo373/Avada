@@ -1,6 +1,6 @@
-import {useState, useCallback} from 'react';
+import { useState, useCallback } from 'react';
 import React from 'react';
-import {Card, ResourceList, ResourceItem, Page, Text, InlineStack} from '@shopify/polaris';
+import { Card, ResourceList, ResourceItem, Page, Text, InlineStack, Layout } from '@shopify/polaris';
 import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
 import usePaginate from '../../hooks/api/usePaginate';
 
@@ -11,7 +11,7 @@ export default function Notifications() {
     singular: 'notification',
     plural: 'notifications'
   };
-  const {loading, prevPage, nextPage, pageInfo, data: items, setData: setItems} = usePaginate({
+  const { loading, prevPage, nextPage, pageInfo, data: items, setData: setItems } = usePaginate({
     url: '/notifications',
     defaultLimit: 10,
     defaultSort: 'timestamp:desc'
@@ -40,32 +40,35 @@ export default function Notifications() {
   );
 
   return (
-    <React.Fragment>
-      <Page title="Notifications" subtitle="List of sale notifications from Shopify "></Page>
-      <Card>
-        <ResourceList
-          resourceName={resourceName}
-          items={items}
-          renderItem={item => renderItem(item)}
-          loading={loading}
-          selectedItems={selectedItems}
-          onSelectionChange={setSelectedItems}
-          selectable
-          sortValue={sortValue}
-          sortOptions={[
-            {label: 'Newest date', value: 'DATE_MODIFIED_DESC'},
-            {label: 'Oldest date', value: 'DATE_MODIFIED_ASC'}
-          ]}
-          onSortChange={handleSortChange}
-          pagination={{
-            hasNext: !!pageInfo?.hasNext,
-            hasPrevious: !!pageInfo?.hasPre,
-            onNext: nextPage,
-            onPrevious: prevPage
-          }}
-        />
-      </Card>
-    </React.Fragment>
+    <Page title="Notifications" subtitle="List of sale notifications from Shopify ">
+      <Layout>
+        <Layout.Section>
+          <Card>
+            <ResourceList
+              resourceName={resourceName}
+              items={items}
+              renderItem={item => renderItem(item)}
+              loading={loading}
+              selectedItems={selectedItems}
+              onSelectionChange={setSelectedItems}
+              selectable
+              sortValue={sortValue}
+              sortOptions={[
+                { label: 'Newest date', value: 'DATE_MODIFIED_DESC' },
+                { label: 'Oldest date', value: 'DATE_MODIFIED_ASC' }
+              ]}
+              onSortChange={handleSortChange}
+              pagination={{
+                hasNext: !!pageInfo?.hasNext,
+                hasPrevious: !!pageInfo?.hasPre,
+                onNext: nextPage,
+                onPrevious: prevPage
+              }}
+            />
+          </Card>
+        </Layout.Section>
+      </Layout>
+    </Page>
   );
   function renderItem(item) {
     return (

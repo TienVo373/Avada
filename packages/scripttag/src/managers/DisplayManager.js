@@ -16,10 +16,11 @@ export default class DisplayManager {
 
     this.insertContainer();
 
-    if (!this.shouldDisplay()) return;
-
+    if (!this.shouldDisplay()) {
+      console.log('DisplayManager: Notifications will not be displayed on this URL.');
+      return;
+    }
     await this.sleep(this.settings.timeBeforeFirstPop);
-    // notifications.forEach
     for (const notification of notifications) {
       await this.display(notification);
       console.log('Displayed notification:', notification);
@@ -72,14 +73,19 @@ export default class DisplayManager {
   shouldDisplay() {
     const url = window.location.protocol + '//' + window.location.host + window.location.pathname;
     const { allowShow = 'all', includedUrls = '', excludedUrls = '' } = this.settings || {};
+    console.log(includedUrls, excludedUrls);
 
-    const includedUrlsArray = includedUrls.split('\n').map(u => u.trim()).filter(Boolean);
-    const excludedUrlsArray = excludedUrls.split('\n').map(u => u.trim()).filter(Boolean);
-
-    if (excludedUrlsArray.includes(url)) return false;
-    if (allowShow === 'all') return true;
-    if (allowShow === 'specific') return includedUrlsArray.includes(url);
-
-    return false;
+    const includedUrlsArray = includedUrls.split('\n').map(u => u.trim()).filter(u => u);
+    const excludedUrlsArray = excludedUrls.split('\n').map(u => u.trim()).filter(u => u);
+    console.log('Included URLs:', includedUrlsArray);
+    console.log('Excluded URLs:', excludedUrlsArray);
+    if (allowShow === 'all') {
+      return !excludedUrlsArray.includes(url);
+    }
+    if (allowShow === 'specific') {
+      const isIncluded = includedUrlsArray.some(u => url.includes(u));
+      const isExcluded = excludedUrlsArray.some(u => url.includes(u));
+      return isIncluded && !isExcluded;
+    }
   }
 }

@@ -49,8 +49,6 @@ export async function getNotifications(ctx) {
   try {
     const shopData = getCurrentShopData(ctx);
     const { limit, after, sortOrder } = ctx.query;
-
-    // Build Firestore query
     const notifications = await notificationsRepository.get({
       shopId: shopData.id,
       limit: parseInt(limit, 10),

@@ -1,11 +1,5 @@
 import { Firestore } from '@google-cloud/firestore';
 
-/**
- * @documentation
- *
- * Only use one repository to connect to one collection
- * do not connect more than one collection from one repository
- */
 const firestore = new Firestore();
 export const collection = firestore.collection('settings');
 

@@ -1,4 +1,4 @@
-import {prepareShopData} from '@avada/core';
+import { prepareShopData } from '@avada/core';
 import shopifyConfig from '../config/shopify';
 import Shopify from 'shopify-api-node';
 import fs from 'fs';
@@ -18,7 +18,7 @@ import prepareNotification from '../helpers/prepareNotification';
  */
 export function initShopify(shopData, apiVersion = API_VERSION) {
   const shopParsedData = prepareShopData(shopData.id, shopData, shopifyConfig.accessTokenKey);
-  const {shopifyDomain, accessToken} = shopParsedData;
+  const { shopifyDomain, accessToken } = shopParsedData;
 
   return new Shopify({
     shopName: shopifyDomain,
@@ -55,7 +55,7 @@ export async function syncOrders(shopify, shop) {
     const notifications = edges.map(edge => prepareNotification(shop, edge.node));
 
     // Save notifications in Firestore
-     await Promise.all(notifications.map(notifications => notificationRepository.createOne(notifications)));
+    await Promise.all(notifications.map(notifications => notificationRepository.createOne(notifications)));
 
     console.info(
       `Successfully created ${notifications.length} notifications for shop ${shopify.options.shopName}`
@@ -79,12 +79,12 @@ export async function createWebhooks(shopify) {
     await Promise.all(unusedWebhooks.map(webhook => shopify.webhook.delete(webhook.id)));
   }
 
-  // Ensure we don’t duplicate
+  // Ensure don’t duplicate
   const existing = await shopify.webhook.list({
     address: `https://${appConfig.baseUrl}/webhook/orders/new`
   });
   console.log(existing, 'existing webhooks');
-  
+
 
   if (existing.length === 0) {
     await shopify.webhook.create({

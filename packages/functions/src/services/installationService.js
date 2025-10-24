@@ -6,7 +6,6 @@ import defaultSettings from '../const/defaultSetting';
 export async function installApp(ctx) {
     console.log("Running installApp...");
     try {
-
         const shopifyDomain = ctx.state.shopify.shop
         const shop = await getShopByShopifyDomain(shopifyDomain);
         const shopify = initShopify(shop);
