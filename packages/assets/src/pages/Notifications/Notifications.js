@@ -1,9 +1,12 @@
-import { useState, useCallback } from 'react';
+import {useState, useCallback} from 'react';
 import React from 'react';
-import { Card, ResourceList, ResourceItem, Page, Text, InlineStack, Layout } from '@shopify/polaris';
+import {Card, ResourceList, ResourceItem, Page, Text, InlineStack, Layout} from '@shopify/polaris';
 import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
 import usePaginate from '../../hooks/api/usePaginate';
-
+/**
+ *
+ * @returns {JSX.Element}
+ */
 export default function Notifications() {
   const [sortValue, setSortValue] = useState('DATE_MODIFIED_DESC');
   const [selectedItems, setSelectedItems] = useState([]);
@@ -11,7 +14,7 @@ export default function Notifications() {
     singular: 'notification',
     plural: 'notifications'
   };
-  const { loading, prevPage, nextPage, pageInfo, data: items, setData: setItems } = usePaginate({
+  const {loading, prevPage, nextPage, pageInfo, data: items, setData: setItems} = usePaginate({
     url: '/notifications',
     defaultLimit: 10,
     defaultSort: 'timestamp:desc'
@@ -20,14 +23,8 @@ export default function Notifications() {
     selected => {
       setSortValue(selected);
       const sorted = [...items].sort((a, b) => {
-        const dateA =
-          a.timestamp?._seconds !== undefined
-            ? new Date(a.timestamp._seconds * 1000)
-            : new Date(a.timestamp);
-        const dateB =
-          b.timestamp?._seconds !== undefined
-            ? new Date(b.timestamp._seconds * 1000)
-            : new Date(b.timestamp);
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
 
         if (selected === 'DATE_MODIFIED_DESC') {
           return dateB - dateA;
@@ -46,7 +43,7 @@ export default function Notifications() {
           <Card>
             <ResourceList
               resourceName={resourceName}
-              items={items}
+              items={items || []}
               renderItem={item => renderItem(item)}
               loading={loading}
               selectedItems={selectedItems}
@@ -54,8 +51,8 @@ export default function Notifications() {
               selectable
               sortValue={sortValue}
               sortOptions={[
-                { label: 'Newest date', value: 'DATE_MODIFIED_DESC' },
-                { label: 'Oldest date', value: 'DATE_MODIFIED_ASC' }
+                {label: 'Newest date', value: 'DATE_MODIFIED_DESC'},
+                {label: 'Oldest date', value: 'DATE_MODIFIED_ASC'}
               ]}
               onSortChange={handleSortChange}
               pagination={{
@@ -80,14 +77,10 @@ export default function Notifications() {
             country={item.country}
             productName={item.productName}
             productImage={item.productImage}
-            timestamp={new Date(item.timestamp._seconds * 1000)}
+            timestamp={item.timestamp}
             settings={item.settings}
           ></NotificationPopup>
-          <Text>
-            {item.timestamp?._seconds
-              ? new Date(item.timestamp._seconds * 1000).toLocaleString()
-              : new Date(item.timestamp).toLocaleString()}
-          </Text>
+          <Text>{new Date(item.timestamp).toLocaleString()}</Text>
         </InlineStack>
       </ResourceItem>
     );

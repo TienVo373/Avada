@@ -1,5 +1,5 @@
 import { Firestore } from '@google-cloud/firestore';
-
+import { formatDateFields } from '@avada/firestore-utils';
 const firestore = new Firestore();
 export const collection = firestore.collection('notifications');
 
@@ -18,12 +18,15 @@ export async function createOne(data) {
 }
 
 /**
+ * Get notifications with pagination
  * @param {Object} params
  * @param {string} params.shopId
- * @param {string} params.sortOrder
  * @param {number} [params.limit=10]
- * @param {string} [params.after]
- * @returns {Promise<Array<Object>>}
+ * @param {string} [params.after] - cursor for forward pagination
+ * @param {string} [params.before] - cursor for backward pagination
+ * @param {boolean} [params.withDocs=false] - include raw Firestore docs
+ * @param {boolean} [params.hasCount=false] - include total count
+ * @param {string} [params.sortOrder='desc'] - 'asc' or 'desc'
  */
 export async function get({ shopId, limit = 10, after, sortOrder = 'desc' }) {
   let queryRef = collection
@@ -40,7 +43,8 @@ export async function get({ shopId, limit = 10, after, sortOrder = 'desc' }) {
   const snapshot = await queryRef.get();
   return snapshot.docs.map(doc => ({
     id: doc.id,
-    ...doc.data(),
+    ...formatDateFields(doc.data()
+    )
   }));
 }
 
@@ -48,6 +52,7 @@ export async function get({ shopId, limit = 10, after, sortOrder = 'desc' }) {
  * @param {string} shopId
  * @returns {Promise<Array<Object>>}
  */
+
 export async function getByShopDomain(shopDomain) {
   const snapshot = await collection
     .where('shopDomain', '==', shopDomain)
@@ -55,6 +60,6 @@ export async function getByShopDomain(shopDomain) {
 
   return snapshot.docs.map(doc => ({
     id: doc.id,
-    ...doc.data(),
+    ...formatDateFields(doc.data())
   }));
 }

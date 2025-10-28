@@ -7,7 +7,17 @@ export default class DisplayManager {
   constructor() {
     this.notifications = [];
     this.settings = {};
+  }
+  storeDisplayedData() {
+    return JSON.parse(localStorage.getItem('avada_scripttag_notifications') || '[]');
+  };
 
+  displayedNotifications(notificationId) {
+    const displayed = this.storeDisplayedData()
+    if (!displayed.includes(notificationId)) {
+      displayed.push(notificationId);
+      localStorage.setItem('avada_scripttag_notifications', JSON.stringify(displayed));
+    }
   }
   async initialize({ notifications = [], settings = {} } = {}) {
     this.notifications = Array.isArray(notifications) ? notifications : [];
@@ -22,12 +32,19 @@ export default class DisplayManager {
     }
     await this.sleep(this.settings.timeBeforeFirstPop);
     for (const notification of notifications) {
+      const displayed = this.storeDisplayedData();
+      if (displayed.includes(notification.id)) {
+        console.log(`Skipping notification ${notification.id} — already shown.`);
+        continue;
+      }
+
       await this.display(notification);
       console.log('Displayed notification:', notification);
 
       await this.sleep(this.settings.displayDuration);
 
       this.fadeOut();
+      this.displayedNotifications(notification.id);
 
       await this.sleep(this.settings.gapBetweenPops);
     }
@@ -48,13 +65,16 @@ export default class DisplayManager {
     const container = document.querySelector('#Avada-SalePop') || this.insertContainer();
     const popup = React.createElement(NotificationPopup, {
       ...notification,
-      settings: this.settings
+      settings: this.settings,
+      onClose: () => {
+        this.fadeOut();
+        this.displayedNotifications(notification.id)
+      }
     });
     if (container) {
       render(popup, container);
     }
   }
-
   insertContainer() {
     const popupEl = document.createElement('div');
     popupEl.id = `Avada-SalePop`;

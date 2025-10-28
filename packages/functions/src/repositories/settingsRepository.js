@@ -1,5 +1,5 @@
 import { Firestore } from '@google-cloud/firestore';
-
+import { formatDateFields } from '@avada/firestore-utils';
 const firestore = new Firestore();
 export const collection = firestore.collection('settings');
 
@@ -32,8 +32,11 @@ export async function create({ shopId, defaultSetting, shopDomain }) {
   }
   return doc.data();
 }
-
-
+/**
+ * 
+ * @param {*} shopId 
+ * @param {*} data 
+ */
 export async function update(shopId, data) {
   const docRef = collection.doc(shopId);
   await docRef.set(
@@ -44,16 +47,19 @@ export async function update(shopId, data) {
     { merge: true }
   );
 }
-// export async function getByShopId(shopId) {
-//   const docRef = collection.doc(shopId);
-//   const doc = await docRef.get();
-//   return doc.exists ? { id: doc.id, ...doc.data() } : null;
-// }
+/**
+ * 
+ * @param {*} shopDomain 
+ * @returns 
+ */
 export async function getByShopDomain(shopDomain) {
   const snapshot = await collection
     .where('shopDomain', '==', shopDomain)
     .get();
   if (snapshot.empty) return null;
   const doc = snapshot.docs[0];
-  return { ...doc.data() };
+  return {
+    id: doc.id,
+    ...formatDateFields((doc.data())),
+  };
 }

@@ -1,7 +1,11 @@
 import * as notificationsRepository from '../repositories/notificationsRepository.js';
 import { getCurrentShop, getCurrentShopData } from '../helpers/auth.js';
 
-
+/**
+ * 
+ * @param {*} ctx 
+ * @returns 
+ */
 export async function createNotification(ctx) {
   try {
     const shopId = getCurrentShop(ctx);
@@ -45,6 +49,11 @@ export async function createNotification(ctx) {
     ctx.body = { error: 'Failed to create notification' };
   }
 }
+/** 
+ * 
+ * @param {*} ctx 
+ * @returns 
+ */
 export async function getNotifications(ctx) {
   try {
     const shopData = getCurrentShopData(ctx);

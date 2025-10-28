@@ -10,15 +10,23 @@ const NotificationPopup = ({
   productName = 'Puffer Jacket With Hidden Hood',
   timestamp = `${new Date()}`,
   productImage = 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
-  settings = {hideTimeAgo: false, truncateProductName: false, position: 'bottom-right'}
+  settings = { hideTimeAgo: false, truncateProductName: false, position: 'bottom-right' },
+  onClose,
 }) => {
   const truncateString = (str, n) => {
     return str?.length > n ? str.substring(0, n - 1) + '...' : str;
   };
-  
+
   return (
-    <div className={`Avava-SP__Wrapper fadeInUp animated ${settings.position}`}> 
+    <div className={`Avava-SP__Wrapper fadeInUp animated ${settings.position}`}>
       <div className="Avava-SP__Inner">
+        <button
+          className="Avada-SP__CloseButton"
+          onClick={onClose}
+          aria-label="Close notification"
+        >
+          ×
+        </button>
         <div className="Avava-SP__Container">
           <a href="#" className={'Avava-SP__LinkWrapper'}>
             <div
@@ -55,7 +63,8 @@ NotificationPopup.propTypes = {
   timeAgo: PropTypes.string,
   productImage: PropTypes.string,
   settings: PropTypes.object,
-  timestamp: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
+  timestamp: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+  onClose: PropTypes.func,
 };
 
 export default NotificationPopup;

@@ -2,11 +2,15 @@
 import { getCurrentShop, getCurrentShopData } from '../helpers/auth';
 import * as settingsRepository from '../repositories/settingsRepository'
 import defaultSetting from '../const/defaultSetting';
-
+/** 
+ * 
+ * @param {*} ctx 
+ * @returns 
+ */
 export async function getSettings(ctx) {
   try {
     const shopId = getCurrentShop(ctx);
-    const shopData = await getCurrentShopData(ctx);
+    const shopData = getCurrentShopData(ctx);
     const shopDomain = shopData.shopifyDomain;
     console.log('Current shop data:', shopData);
     if (!shopId) {
@@ -24,7 +28,11 @@ export async function getSettings(ctx) {
     ctx.body = { error: 'Internal Server Error' };
   }
 }
-
+/** 
+ * 
+ * @param {*} ctx 
+ * @returns 
+ */
 export async function updateOne(ctx) {
   try {
     const shopId = getCurrentShop(ctx);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCallback } from 'react';
+import {useCallback} from 'react';
 import {
   Card,
   RangeSlider,
@@ -12,7 +12,7 @@ import {
 } from '@shopify/polaris';
 import DesktopPositionInput from '../../../components/DesktopPositionInput/DesktopPositionInput';
 import PropTypes from 'prop-types';
-export default function DisplayTab({ input, setInput }) {
+export default function DisplayTab({input, setInput}) {
   const handleSliderChange = useCallback(
     key => value => {
       setInput(prev => ({
@@ -32,7 +32,7 @@ export default function DisplayTab({ input, setInput }) {
         <DesktopPositionInput
           label="Desktop Position"
           value={input.position}
-          onChange={newValue => setInput(prev => ({ ...prev, position: newValue }))}
+          onChange={newValue => setInput(prev => ({...prev, position: newValue}))}
           helpText="The display position of the pop on your website"
         />
 
@@ -40,12 +40,12 @@ export default function DisplayTab({ input, setInput }) {
           <Checkbox
             label="Hide time ago"
             checked={!!input.hideTimeAgo}
-            onChange={checked => setInput(prev => ({ ...prev, hideTimeAgo: checked }))}
+            onChange={checked => setInput(prev => ({...prev, hideTimeAgo: checked}))}
           />
           <Checkbox
             label="Truncate product name"
             checked={!!input.truncateProductName}
-            onChange={checked => setInput(prev => ({ ...prev, truncateProductName: checked }))}
+            onChange={checked => setInput(prev => ({...prev, truncateProductName: checked}))}
           />
         </BlockStack>
 

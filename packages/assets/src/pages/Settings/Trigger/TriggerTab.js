@@ -1,24 +1,24 @@
-import React, { useCallback } from 'react';
-import { Card, TextField, Select, Form, FormLayout, Box, BlockStack, Text } from '@shopify/polaris';
+import React, {useCallback} from 'react';
+import {Card, TextField, Select, Form, FormLayout, Box, BlockStack, Text} from '@shopify/polaris';
 import PropTypes from 'prop-types';
 
-export default function TriggerTab({ input, setInput }) {
+export default function TriggerTab({input, setInput}) {
   const options = [
-    { label: 'All pages', value: 'all' },
-    { label: 'Specific pages', value: 'specific' }
+    {label: 'All pages', value: 'all' },
+    {label: 'Specific pages', value: 'specific'}
   ];
 
-  const handleSelectChange = useCallback(value => setInput(prev => ({ ...prev, allowShow: value })), [
+  const handleSelectChange = useCallback(value => setInput(prev => ({...prev, allowShow: value})), [
     setInput
   ]);
 
   const handleIncludedUrlsChange = useCallback(
-    value => setInput(prev => ({ ...prev, includedUrls: value })),
+    value => setInput(prev => ({...prev, includedUrls: value})),
     [setInput]
   );
 
   const handleExcludedUrlsChange = useCallback(
-    value => setInput(prev => ({ ...prev, excludedUrls: value })),
+    value => setInput(prev => ({...prev, excludedUrls: value})),
     [setInput]
   );
 

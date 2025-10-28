@@ -1,6 +1,12 @@
 import * as settingsRepository from '../repositories/settingsRepository.js';
 import * as notificationsRepository from '../repositories/notificationsRepository.js';
 import moment from 'moment';
+/**
+ * 
+ * @param {
+ * } ctx 
+ * @returns 
+ */
 export async function getClientData(ctx) {
     try {
         const shopDomain = ctx.query.shopifyDomain;
@@ -9,18 +15,13 @@ export async function getClientData(ctx) {
             settingsRepository.getByShopDomain(shopDomain),
             notificationsRepository.getByShopDomain(shopDomain),
         ]);
-
         const clientNotifications = notifications.map(notification => {
-            const createdAtDate = notification.createdAt && notification.createdAt._seconds
-                ? new Date(notification.createdAt._seconds * 1000)
-                : new Date(notification.createdAt);
-
+            const createdAtDate = notification.createdAt || new Date();
             return {
                 ...notification,
                 createdAt: createdAtDate,
                 timestamp: createdAtDate,
                 timeago: moment(createdAtDate).fromNow()
-
             };
         });
         const data = {
